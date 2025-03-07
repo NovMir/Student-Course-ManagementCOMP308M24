@@ -1,6 +1,5 @@
+import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
-
 
 const userSchema = new mongoose.Schema({
   studentNumber: {
@@ -28,22 +27,18 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  program: String,
-
-  role: {
+  program:{
     type: String,
-    enum: ['student', 'admin'],//add logic to check if the user is admin while registering
-    default: 'student'
+    required: false
   },
-  // Custom fields
-  favoriteTopic: String,
-  technicalSkill: String,
   courses: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Course'
-  }]
-}, {
-  timestamps: true
+  }],
+  roles: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role'
+  }],
 });
 
 // Hash password before saving

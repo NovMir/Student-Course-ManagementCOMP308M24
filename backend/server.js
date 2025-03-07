@@ -6,21 +6,25 @@ import corsOptions from './config/corsOptions.js';
 import courseRoutes from './routes/Course.routes.js';
 import userRoutes from './routes/User.routes.js';
 import connectDB from './config/db.js'; 
-import path from 'path';
+import authroutes from './routes/auth.routes.js';
+import roleRouter from './routes/roleRoutes.js';
 console.log(process.env.NODE_ENV);
-const PORT = process.env.PORT 
-;//wherevr it is hosted it will take that port otherwise 8080 local host
-
+const PORT = process.env.PORT ;
 const app = express();
 
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());  
-app.get('/api', (req, res) => {
-  res.json({ message: 'Hello from server!' });
+
+app.use('/api/courses', courseRoutes);
+app.use('/api/users', userRoutes);//user endpoints
+app.use('/api/auth', authroutes);//auth endpoints
+app.use('/api/roles/seed', roleRouter);//role
+
+// Simple health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'API is running' });
 });
-app.use('/api', courseRoutes);
-app.use('/Users', userRoutes);
 
 // Connect to MongoDB and start the server
 connectDB().then(() => {
@@ -28,6 +32,3 @@ connectDB().then(() => {
     console.log(`Server listening on port ${PORT}`)
   );
 });
-
-//app.use('/', express.static(path.join(__dirname, '../react-client/dist')));
-//app.use('/api', require('./routes/root'));net stat

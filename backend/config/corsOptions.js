@@ -1,3 +1,4 @@
+// corsOptions.js
 import allowedOrigins from './allowedOrigins.js';
 
 const corsOptions = {
@@ -8,7 +9,11 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+  credentials: true, 
+  methods: 'GET, POST, PUT, DELETE, OPTIONS',
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Length', 'X-Requested-With', 'Authorization'],
+   optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
 export default corsOptions;

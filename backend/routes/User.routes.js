@@ -1,10 +1,10 @@
 import express from 'express';
-import { protect } from '../middleware/auth.js';
+import { protect , authorize } from '../middleware/auth.js';
+import User from '../model/User.js';
 
-
+import{ getAvailableCourses } from '../controller/CourseController.js'; 
 import {
-    registerUser,
-    loginUser,
+   createStudent,
     getAllStudents,
     getAllAdmins,
     updateStudent,
@@ -15,21 +15,23 @@ import {
     deleteCourseFromStudent
   } from '../controller/UserController.js';
   const router = express.Router();
-// Register and Login
-router.post('/register', registerUser);
-router.post('/login', loginUser);
+
 
 // Students
-router.get('/students',protect, getAllStudents);
-router.put('/students/:id',protect, updateStudent);
-router.delete('/students/:id',protect, deleteStudent);
+router.post('/students', protect, authorize('admin'), createStudent);
+
+router.get('/students',protect,authorize('admin'), getAllStudents);
+router.put('/students/:id',protect,authorize('student'), updateStudent);
+router.delete('/students/:id',protect,authorize('student'), deleteStudent);
 router.get('/students/:id/courses',protect, getStudentCourses);
-router.post('/students/:studentId/courses/:courseId', addCourseToStudent);
-router.delete('/students/:studentId/courses/:courseId', deleteCourseFromStudent);
+router.post('/students/:studentId/courses/:courseId', protect,addCourseToStudent);
+router.delete('/students/:studentId/courses/:courseId', protect,deleteCourseFromStudent);
+// Ensure only authenticated students can access available courses
+router.get('/available', protect, authorize('student'), getAvailableCourses);
 
 // Admins
-router.get('/admins', protect,getAllAdmins);
-router.delete('/admins/:id', deleteAdmin);
+router.get('/admins', protect ,authorize('admin'), getAllAdmins);
+router.delete('/admins/:id',authorize('admin'), deleteAdmin);
 
 export default router;
  
